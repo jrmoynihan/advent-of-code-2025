@@ -10,15 +10,38 @@ pub fn part_one(input: &str) -> Option<u64> {
         let end = parts.next().unwrap();
 
         for id in start..=end {
-            let id_str = id.to_string();
-            let len = id_str.len();
+            // let id_str = id.to_string();
+            // let len = id_str.len();
+
+            // Extract digits into a small array (max ~20 digits for u64)
+            let mut digits = [0u8; 20];
+            let mut len = 0;
+            let mut temp = id;
+            while temp > 0 {
+                digits[len] = (temp % 10) as u8;
+                temp /= 10;
+                len += 1;
+            }
             if len % 2 != 0 {
                 continue;
             }
             // Split the id in half and compare string slices directly
             // Since there are no leading zeros, string equality implies number equality
-            let (left, right) = id_str.split_at(len / 2);
-            if left == right {
+            // let (left, right) = id_str.split_at(len / 2);
+            // if left == right {
+            //     sum += id;
+            // }
+
+            // Compare first half with second half (reversed)
+            let half = len / 2;
+            let mut matches = true;
+            for i in 0..half {
+                if digits[i] != digits[half + i] {
+                    matches = false;
+                    break;
+                }
+            }
+            if matches {
                 sum += id;
             }
         }
@@ -36,21 +59,52 @@ pub fn part_two(input: &str) -> Option<u64> {
         let end = parts.next().unwrap();
 
         for id in start..=end {
-            let id_str = id.to_string();
-            let len = id_str.len();
-            let bytes = id_str.as_bytes();
+            // let id_str = id.to_string();
+            // let len = id_str.len();
+            // let bytes = id_str.as_bytes();
 
-            // Only check divisors of len (skip len itself since that would be 1 chunk)
-            // Iterate from largest to smallest divisor for early exit
+            // // Only check divisors of len (skip len itself since that would be 1 chunk)
+            // // Iterate from largest to smallest divisor for early exit
+            // for size in (1..len).rev() {
+            //     // Skip if size doesn't divide len evenly
+            //     if len % size != 0 {
+            //         continue;
+            //     }
+
+            //     // Compare all chunks to the first chunk
+            //     let first_chunk = &bytes[..size];
+            //     if bytes.chunks(size).skip(1).all(|chunk| chunk == first_chunk) {
+            //         sum += id;
+            //         break;
+            //     }
+            // }
+
+            // Extract digits
+            let mut digits = [0u8; 20];
+            let mut len = 0;
+            let mut temp = id;
+            while temp > 0 {
+                digits[len] = (temp % 10) as u8;
+                temp /= 10;
+                len += 1;
+            }
+
+            // Check divisors
             for size in (1..len).rev() {
-                // Skip if size doesn't divide len evenly
                 if len % size != 0 {
                     continue;
                 }
 
-                // Compare all chunks to the first chunk
-                let first_chunk = &bytes[..size];
-                if bytes.chunks(size).skip(1).all(|chunk| chunk == first_chunk) {
+                // Compare chunks
+                let first_chunk = &digits[..size];
+                let mut all_match = true;
+                for chunk_start in (size..len).step_by(size) {
+                    if &digits[chunk_start..chunk_start + size] != first_chunk {
+                        all_match = false;
+                        break;
+                    }
+                }
+                if all_match {
                     sum += id;
                     break;
                 }

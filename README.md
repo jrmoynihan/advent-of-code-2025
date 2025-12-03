@@ -7,21 +7,21 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 <!--- advent_readme_stars table --->
 ## 2025 Results
 
-| Day | Part 1 | Part 2 |
-| :---: | :---: | :---: |
-| [Day 1](https://adventofcode.com/2025/day/1) | ⭐ | ⭐ |
-| [Day 2](https://adventofcode.com/2025/day/2) | ⭐ | ⭐ |
+|                     Day                      | Part 1 | Part 2 |
+| :------------------------------------------: | :----: | :----: |
+| [Day 1](https://adventofcode.com/2025/day/1) |   ⭐    |   ⭐    |
+| [Day 2](https://adventofcode.com/2025/day/2) |   ⭐    |   ⭐    |
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
 ## Benchmarks
 
-| Day | Part 1 | Part 2 |
-| :---: | :---: | :---:  |
-| [Day 1](./src/bin/01.rs) | `77.8µs` | `77.5µs` |
-| [Day 2](./src/bin/02.rs) | `62.1ms` | `87.2ms` |
+|           Day            |  Part 1  |  Part 2  |
+| :----------------------: | :------: | :------: |
+| [Day 1](./src/bin/01.rs) | `77.3µs` | `77.4µs` |
+| [Day 2](./src/bin/02.rs) | `8.4ms`  | `35.2ms` |
 
-**Total: 149.46ms**
+**Total: 43.75ms**
 <!--- benchmarking table --->
 
 ---
