@@ -1,50 +1,6 @@
 #![feature(int_roundings)]
 advent_of_code::solution!(1);
 
-pub fn part_one(input: &str) -> Option<u64> {
-    let mut zeros = 0;
-    let mut dial: i32 = 50;
-    let mut lines = input.lines();
-    while let Some(line) = lines.next() {
-        // Split the line at the first character
-        let (direction, clicks) = line.split_at(1);
-        let clicks = clicks.parse::<i32>().unwrap();
-
-        // Process the left and right parts of the line
-        if direction == "L" {
-            println!(
-                "turning {direction} {clicks} clicks from {dial} to {}",
-                dial - clicks
-            );
-            let mut new = dial - clicks;
-            while new < 0 {
-                new = 100 + new;
-                println!("new: {}", new);
-            }
-            dial = new;
-            println!("dial: {}", dial);
-            println!("------------")
-        } else if direction == "R" {
-            println!(
-                "turning {direction} {clicks} clicks from {dial} to {}",
-                dial + clicks
-            );
-            let mut new = dial + clicks;
-            while new >= 100 {
-                new = new - 100;
-                println!("new: {}", new);
-            }
-            dial = new;
-            println!("dial: {}", dial);
-            println!("------------")
-        }
-        if dial == 0 {
-            zeros += 1;
-        }
-    }
-    Some(zeros)
-}
-
 #[derive(Debug)]
 enum Direction {
     Left,
@@ -75,6 +31,27 @@ impl Direction {
     }
 }
 
+pub fn part_one(input: &str) -> Option<u64> {
+    let mut zeros = 0;
+    let mut dial: i64 = 50;
+    let mut lines = input.lines();
+    while let Some(line) = lines.next() {
+        // Split the line at the first character
+        let (direction, clicks) = line.split_at(1);
+        let clicks = clicks.parse::<i64>().unwrap();
+
+        // Process the left and right parts of the line
+        if let Some(direction) = Direction::from_char(direction.chars().next()?) {
+            let (new, revolutions) = direction.spin(dial, clicks);
+            dial = new;
+        }
+        if dial == DIAL_MIN {
+            zeros += 1;
+        }
+    }
+    Some(zeros)
+}
+
 pub fn part_two(input: &str) -> Option<u64> {
     let mut zeros: u64 = 0;
     let mut dial: i64 = 50;
@@ -88,15 +65,15 @@ pub fn part_two(input: &str) -> Option<u64> {
         // Process the left and right parts of the line
         if let Some(direction) = Direction::from_char(direction.chars().next()?) {
             let (new, revolutions) = direction.spin(dial, clicks as i64);
-            println!(
-                "direction: {:?}, turning {clicks} clicks ({revolutions} revolutions) from {dial} to {new}",
-                direction
-            );
+            // println!(
+            //     "direction: {:?}, turning {clicks} clicks ({revolutions} revolutions) from {dial} to {new}",
+            //     direction
+            // );
             zeros += revolutions as u64;
             dial = new;
         }
-        println!("dial: {dial}, zeros: {zeros}");
-        println!("------------")
+        // println!("dial: {dial}, zeros: {zeros}");
+        // println!("------------")
     }
     Some(zeros)
 }
