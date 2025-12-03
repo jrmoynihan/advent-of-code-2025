@@ -1,4 +1,3 @@
-#![feature(int_roundings)]
 advent_of_code::solution!(1);
 
 #[derive(Debug)]
