@@ -42,7 +42,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 
         // Process the left and right parts of the line
         if let Some(direction) = Direction::from_char(direction.chars().next()?) {
-            let (new, revolutions) = direction.spin(dial, clicks);
+            let (new, _) = direction.spin(dial, clicks);
             dial = new;
         }
         if dial == DIAL_MIN {
