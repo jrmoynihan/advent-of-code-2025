@@ -4,28 +4,32 @@ advent_of_code::solution!(4);
 
 fn find_accessible_locations(grid: &Grid<char>) -> Option<Vec<(usize, usize)>> {
     let mut accessible_locations = Vec::new();
-    grid.iter_rows().enumerate().for_each(|(r, row)| {
-        row.enumerate().for_each(|(c, space)| {
-            if *space != '@' {
-                return;
-            } // Skip if not an '@'
+    let rows = grid.rows();
+    let cols = grid.cols();
+
+    for r in 0..rows {
+        for c in 0..cols {
+            if grid.get(r, c) != Some(&'@') {
+                continue;
+            }
+
             let mut roll_count = 0;
-            'outer: for dr in -1..=1 as isize {
-                for dc in -1..=1 as isize {
-                    if r as isize + dr < 0
-                        || c as isize + dc < 0
-                        || r as isize + dr >= grid.rows() as isize
-                        || c as isize + dc >= grid.cols() as isize
-                        || dr == 0 && dc == 0
-                    {
+            let r_signed = r as isize;
+            let c_signed = c as isize;
+
+            'outer: for dr in -1..=1 {
+                for dc in -1..=1 {
+                    if dr == 0 && dc == 0 {
                         continue;
                     }
-                    if let Some('@') =
-                        grid.get((r as isize + dr) as usize, (c as isize + dc) as usize)
-                    {
-                        roll_count += 1;
-                        if roll_count >= 4 {
-                            break 'outer;
+                    let nr = r_signed + dr;
+                    let nc = c_signed + dc;
+                    if nr >= 0 && nc >= 0 && nr < rows as isize && nc < cols as isize {
+                        if grid.get(nr as usize, nc as usize) == Some(&'@') {
+                            roll_count += 1;
+                            if roll_count >= 4 {
+                                break 'outer;
+                            }
                         }
                     }
                 }
@@ -33,9 +37,8 @@ fn find_accessible_locations(grid: &Grid<char>) -> Option<Vec<(usize, usize)>> {
             if roll_count < 4 {
                 accessible_locations.push((r, c));
             }
-        });
-    });
-    // println!("Accessible locations: {:?}", accessible_locations);
+        }
+    }
     Some(accessible_locations)
 }
 
@@ -76,9 +79,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 pub fn part_two(input: &str) -> Option<u64> {
     let mut grid = make_grid(input);
     let initial_rolls = grid.iter().filter(|c| **c == '@').count() as u64;
-    while find_and_remove_accessible_locations(&mut grid) > 0 {
-        continue;
-    }
+    while find_and_remove_accessible_locations(&mut grid) > 0 {}
     let final_rolls = grid.iter().filter(|c| **c == '@').count() as u64;
     let result = initial_rolls - final_rolls;
     // println!("Final Grid: {:?}", grid);
