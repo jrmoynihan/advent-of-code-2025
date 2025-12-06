@@ -25,6 +25,7 @@ dependencies = [
  "dhat",
  "grid",
  "itertools",
+ "merged_range",
  "nom",
  "pico-args",
  "rayon",
@@ -116,6 +117,15 @@ dependencies = [
  "num-traits",
  "wasm-bindgen",
  "windows-targets 0.52.6",
+]
+
+[[package]]
+name = "clippy-utilities"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63940bc99b494c2431ab307e373daf0181a2ad84d738a24beca52f9e724f8760"
+dependencies = [
+ "numeric_cast",
 ]
 
 [[package]]
@@ -265,6 +275,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
 
 [[package]]
+name = "merged_range"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c013377d78bca1015c5c9d56a4f65f0ab3257cbd8b3af0b98e44af889010dbb"
+dependencies = [
+ "clippy-utilities",
+]
+
+[[package]]
 name = "miniz_oxide"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -300,6 +319,12 @@ checksum = "39e3200413f237f41ab11ad6d161bc7239c84dcb631773ccd7de3dfe4b5c267c"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "numeric_cast"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89c16f12ae83bcd4510aff7778f043464991f8b5a10a27d7083f75361de32ac3"
 
 [[package]]
 name = "object"
