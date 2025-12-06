@@ -1,28 +1,34 @@
 advent_of_code::solution!(5);
 
-pub fn part_one(input: &str) -> Option<u64> {
-    // Capture id ranges and ingredient IDs from input
-    let (id_ranges, ingredient_ids) = input.split_once("\n\n").unwrap();
-
-    // Parse and validate all ranges first
-    let mut ranges: Vec<(u64, u64)> = id_ranges
-        .split_whitespace()
-        .filter_map(|range| {
-            range.split_once('-').and_then(|(start, end)| {
-                let start = start.parse::<u64>().ok()?;
-                let end = end.parse::<u64>().ok()?;
-                if start > end {
-                    panic!("Invalid range: start ({start}) > end ({end})");
-                }
-                Some((start, end))
-            })
+fn capture_id_ranges_and_ingredient_ids(input: &str) -> (Vec<(u64, u64)>, Vec<u64>) {
+    input
+        .split_once("\n\n")
+        .map(|(id_ranges, ingredient_ids)| {
+            (
+                id_ranges
+                    .split_whitespace()
+                    .filter_map(|range| {
+                        range.split_once('-').and_then(|(start, end)| {
+                            let start = start.parse::<u64>().ok()?;
+                            let end = end.parse::<u64>().ok()?;
+                            Some((start, end))
+                        })
+                    })
+                    .collect(),
+                ingredient_ids
+                    .split_whitespace()
+                    .map(|id| id.parse::<u64>().unwrap())
+                    .collect(),
+            )
         })
-        .collect();
+        .unwrap()
+}
 
-    // Sort ranges by start value
-    ranges.sort_by_key(|(start, _)| *start);
+fn sort_id_ranges(id_ranges: &mut Vec<(u64, u64)>) {
+    id_ranges.sort_by_key(|(start, _)| *start);
+}
 
-    // Merge overlapping ranges manually
+fn merge_overlapping_ranges(ranges: Vec<(u64, u64)>) -> Vec<(u64, u64)> {
     let mut merged_ranges: Vec<(u64, u64)> = Vec::new();
     for (start, end) in ranges {
         if let Some((_last_start, last_end)) = merged_ranges.last_mut() {
@@ -40,12 +46,18 @@ pub fn part_one(input: &str) -> Option<u64> {
             merged_ranges.push((start, end));
         }
     }
+    merged_ranges
+}
 
-    // Parse ingredient IDs
-    let ingredient_ids = ingredient_ids
-        .split_whitespace()
-        .map(|id| id.parse::<u64>().unwrap())
-        .collect::<Vec<u64>>();
+pub fn part_one(input: &str) -> Option<u64> {
+    // Capture id ranges and ingredient IDs from input
+    let (mut id_ranges, ingredient_ids) = capture_id_ranges_and_ingredient_ids(input);
+
+    // Sort ranges by start value
+    sort_id_ranges(&mut id_ranges);
+
+    // Merge overlapping ranges
+    let merged_ranges = merge_overlapping_ranges(id_ranges);
 
     // Find the ingredient IDs that are in any of the merged ranges
     let fresh_ingredient_id_count = ingredient_ids
@@ -61,8 +73,22 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(fresh_ingredient_id_count as u64)
 }
 
-pub fn part_two(_input: &str) -> Option<u64> {
-    None
+pub fn part_two(input: &str) -> Option<u64> {
+    // Capture id ranges and ingredient IDs from input
+    let (mut id_ranges, _) = capture_id_ranges_and_ingredient_ids(input);
+
+    // Sort ranges by start value
+    sort_id_ranges(&mut id_ranges);
+
+    // Merge overlapping ranges
+    let merged_ranges = merge_overlapping_ranges(id_ranges);
+
+    // Find the total number of unique ingredient IDs in the merged ranges
+    let fresh_ingredient_id_count = merged_ranges
+        .iter()
+        .map(|(start, end)| end - start + 1)
+        .sum();
+    Some(fresh_ingredient_id_count)
 }
 
 #[cfg(test)]
@@ -79,6 +105,7 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        println!("Result: {:?}", result);
+        assert_eq!(result, Some(14));
     }
 }
