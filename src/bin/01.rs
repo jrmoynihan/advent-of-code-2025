@@ -64,15 +64,9 @@ pub fn part_two(input: &str) -> Option<u64> {
         // Process the left and right parts of the line
         if let Some(direction) = Direction::from_char(direction.chars().next()?) {
             let (new, revolutions) = direction.spin(dial, clicks as i64);
-            // println!(
-            //     "direction: {:?}, turning {clicks} clicks ({revolutions} revolutions) from {dial} to {new}",
-            //     direction
-            // );
             zeros += revolutions as u64;
             dial = new;
         }
-        // println!("dial: {dial}, zeros: {zeros}");
-        // println!("------------")
     }
     Some(zeros)
 }
