@@ -94,8 +94,6 @@ fn find_12_cell_joltage(line: &str) -> Option<u64> {
         // Slice the line to the calculated search window size
         let window_slice = &line[current_index..current_index + window_search_len];
 
-        // println!("window_slice: {window_slice}");
-
         if let Some((relative_index, max)) = max_of_window(window_slice) {
             volts.push(max);
             // Advance the current position to the digit *after* the one we just consumed.
@@ -113,7 +111,7 @@ fn find_12_cell_joltage(line: &str) -> Option<u64> {
 
 pub fn part_one(input: &str) -> Option<u64> {
     let sum: u64 = input
-        .par_lines()
+        .lines()
         .map(|line: &str| find_max_joltage(line).unwrap_or(0))
         .sum();
     Some(sum as u64)
@@ -122,13 +120,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 pub fn part_two(input: &str) -> Option<u64> {
     let sum: u64 = input
         .par_lines()
-        .map(|line: &str| {
-            // println!("line: {line}");
-            let max = find_12_cell_joltage(line).unwrap_or(0);
-            // println!("max: {max}");
-            // println!("------------");
-            max
-        })
+        .map(|line: &str| find_12_cell_joltage(line).unwrap_or(0))
         .sum();
     Some(sum as u64)
 }
