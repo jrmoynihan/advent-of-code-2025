@@ -14,6 +14,12 @@ doctest = false
 inherits = "release"
 debug = 1
 
+[profile.release]
+opt-level = 3
+overflow-checks = false
+strip = "debuginfo"
+lto = "fat"
+
 [features]
 dhat-heap = ["dhat"]
 today = ["chrono"]

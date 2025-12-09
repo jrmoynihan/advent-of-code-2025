@@ -20,16 +20,18 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 <!--- benchmarking table --->
 ## Benchmarks
 
+Run on an M1 MacBook Pro
+
 |           Day            |  Part 1  |  Part 2  |
 | :----------------------: | :------: | :------: |
 | [Day 1](./src/bin/01.rs) | `77.3µs` | `77.4µs` |
 | [Day 2](./src/bin/02.rs) | `8.4ms`  | `35.2ms` |
 | [Day 3](./src/bin/03.rs) | `54.3µs` | `59.0µs` |
-| [Day 4](./src/bin/04.rs) | `93.9µs` | `1.3ms`  |
-| [Day 5](./src/bin/05.rs) | `47.9µs` | `40.2µs` |
+| [Day 4](./src/bin/04.rs) | `87.9µs` | `1.1ms`  |
+| [Day 5](./src/bin/05.rs) | `47.2µs` | `39.2µs` |
 | [Day 6](./src/bin/06.rs) | `17.7µs` | `61.0µs` |
 
-**Total: 56.13ms**
+**Total: 47.12ms**
 <!--- benchmarking table --->
 
 ---

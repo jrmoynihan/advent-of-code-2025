@@ -1,5 +1,3 @@
-use grid::Grid;
-
 advent_of_code::solution!(4);
 
 // Count matching neighbors directly without collecting into array first
@@ -152,17 +150,24 @@ fn has_4_or_fewer_neighbors(grid: &[Vec<bool>], row: usize, col: usize) -> bool 
 fn make_padded_grid(input: &str) -> Vec<Vec<bool>> {
     let mut grid: Vec<Vec<bool>> = input
         .lines()
-        .map(|line| line.chars().map(|c| c == '@').collect())
+        .map(|line| {
+            let mut row = vec![false]; // Left border
+            row.extend(line.chars().map(|c| c == '@'));
+            row.push(false); // Right border
+            row
+        })
         .collect();
-    grid.insert(0, vec![false; grid[0].len()]);
-    grid.push(vec![false; grid[0].len()]);
+
+    // Add top and bottom borders
+    let col_count = grid[0].len();
+    grid.insert(0, vec![false; col_count]);
+    grid.push(vec![false; col_count]);
     grid
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
-    use std::iter;
-
-    let mut grid = make_padded_grid(input);
+    let grid = make_padded_grid(input);
+    let col_count = grid[0].len();
 
     // Start inside the grid "border" to avoid bounds checking
     let count = (1..grid.len() - 1)
@@ -177,10 +182,9 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    use std::iter;
-
     // Build grid with border padding
     let mut grid = make_padded_grid(input);
+    let col_count = grid[0].len();
 
     let initial_rolls = grid
         .iter()
