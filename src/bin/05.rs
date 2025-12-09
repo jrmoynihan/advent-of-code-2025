@@ -60,12 +60,27 @@ pub fn part_one(input: &str) -> Option<u64> {
     let merged_ranges = merge_overlapping_ranges(id_ranges);
 
     // Find the ingredient IDs that are in any of the merged ranges
+    // Use binary search since ranges are sorted and non-overlapping
     let fresh_ingredient_id_count = ingredient_ids
         .iter()
         .filter(|id| {
-            merged_ranges
-                .iter()
-                .any(|(start, end)| **id >= *start && **id <= *end)
+            // Binary search for the rightmost range where start <= id
+            // Since ranges are sorted by start and non-overlapping,
+            // we need to find the range that could contain this id
+            let id_val = **id;
+            let idx = merged_ranges
+                .binary_search_by_key(&id_val, |(start, _)| *start)
+                .unwrap_or_else(|idx| idx.saturating_sub(1));
+
+            // Check if id falls within the range at idx or idx-1
+            // (idx might point to the range after, so check idx-1)
+            (idx > 0 && {
+                let (start, end) = merged_ranges[idx - 1];
+                id_val >= start && id_val <= end
+            }) || (idx < merged_ranges.len() && {
+                let (start, end) = merged_ranges[idx];
+                id_val >= start && id_val <= end
+            })
         })
         .count();
 

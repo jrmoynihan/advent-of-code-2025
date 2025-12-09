@@ -106,24 +106,24 @@
 
 ### Current Approach Overhead
 
-| Operation | Cost | Frequency |
-|-----------|------|-----------|
-| String allocation | ~10-50 cycles | Per token |
-| `parse::<u64>()` | ~50-200 cycles | Per number |
-| Grid iterator | ~5-10 cycles | Per element |
-| Option unwrapping | ~1-2 cycles | Per access |
-| Bounds checking | ~1-2 cycles | Per access |
+| Operation         | Cost           | Frequency   |
+| ----------------- | -------------- | ----------- |
+| String allocation | ~10-50 cycles  | Per token   |
+| `parse::<u64>()`  | ~50-200 cycles | Per number  |
+| Grid iterator     | ~5-10 cycles   | Per element |
+| Option unwrapping | ~1-2 cycles    | Per access  |
+| Bounds checking   | ~1-2 cycles    | Per access  |
 
 **Total overhead**: ~100-300 cycles per number parsed
 
 ### SIMD Approach Overhead
 
-| Operation | Cost | Frequency |
-|-----------|------|-----------|
+| Operation             | Cost         | Frequency       |
+| --------------------- | ------------ | --------------- |
 | SIMD digit conversion | ~5-10 cycles | Per 16-64 bytes |
-| Digit table lookup | ~1 cycle | Per byte |
-| Unsafe pointer access | ~1 cycle | Per access |
-| Manual parsing | ~5-10 cycles | Per number |
+| Digit table lookup    | ~1 cycle     | Per byte        |
+| Unsafe pointer access | ~1 cycle     | Per access      |
+| Manual parsing        | ~5-10 cycles | Per number      |
 
 **Total overhead**: ~10-20 cycles per number parsed
 

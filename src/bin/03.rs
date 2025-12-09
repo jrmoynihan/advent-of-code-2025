@@ -2,6 +2,7 @@ use rayon::{iter::ParallelIterator, str::ParallelString};
 
 advent_of_code::solution!(3);
 
+#[inline]
 fn find_max_joltage(line: &str) -> Option<u64> {
     let bytes = line.as_bytes();
 
@@ -46,6 +47,7 @@ fn find_max_joltage(line: &str) -> Option<u64> {
     }
 }
 
+#[inline]
 fn max_of_window(substring: &str) -> Option<(usize, u64)> {
     let bytes = substring.as_bytes();
     let max_entry = bytes
@@ -66,6 +68,7 @@ fn max_of_window(substring: &str) -> Option<(usize, u64)> {
     max_entry.map(|(i, &val)| (i, (val - b'0') as u64))
 }
 
+#[inline]
 fn find_12_cell_joltage(line: &str) -> Option<u64> {
     let mut volts = Vec::<u64>::with_capacity(12);
     let mut current_index = 0;

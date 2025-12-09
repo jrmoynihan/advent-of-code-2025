@@ -10,6 +10,7 @@ const DIAL_MAX: i64 = 100;
 const DIAL_MIN: i64 = 0;
 
 impl Direction {
+    #[inline]
     pub fn from_char(c: char) -> Option<Self> {
         match c {
             'L' => Some(Direction::Left),
@@ -17,6 +18,7 @@ impl Direction {
             _ => None,
         }
     }
+    #[inline]
     pub fn spin(&self, dial: i64, clicks: i64) -> (i64, i64) {
         let new = match self {
             Direction::Left => dial - clicks,
