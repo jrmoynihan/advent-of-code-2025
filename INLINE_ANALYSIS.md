@@ -94,15 +94,15 @@ Most code is commented out. The active code is already inline.
 
 ## Expected Performance Impact
 
-| Day | Function | Expected Impact |
-|-----|----------|----------------|
-| Day 1 | `Direction::from_char` | 1-3% faster |
-| Day 1 | `Direction::spin` | 1-3% faster |
-| Day 3 | `max_of_window` | 2-5% faster (called many times) |
-| Day 3 | `find_max_joltage` | 1-2% faster |
-| Day 3 | `find_12_cell_joltage` | 1-2% faster |
-| Day 6 | `parse_number_from_column*` | 2-4% faster |
-| Day 6 | `get_operator` | 1-2% faster |
+| Day   | Function                    | Expected Impact                 |
+| ----- | --------------------------- | ------------------------------- |
+| Day 1 | `Direction::from_char`      | 1-3% faster                     |
+| Day 1 | `Direction::spin`           | 1-3% faster                     |
+| Day 3 | `max_of_window`             | 2-5% faster (called many times) |
+| Day 3 | `find_max_joltage`          | 1-2% faster                     |
+| Day 3 | `find_12_cell_joltage`      | 1-2% faster                     |
+| Day 6 | `parse_number_from_column*` | 2-4% faster                     |
+| Day 6 | `get_operator`              | 1-2% faster                     |
 
 **Total expected improvement**: 5-15% across all days
 
