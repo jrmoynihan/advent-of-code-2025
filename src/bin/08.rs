@@ -1,9 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet, VecDeque},
-    hash::{Hash, Hasher},
-};
-
-use itertools::Itertools;
+use std::{collections::HashMap, hash::Hash};
 
 advent_of_code::solution!(8);
 
@@ -22,7 +17,10 @@ impl JunctionBox {
         let dx = (self.x - other.x) as f64;
         let dy = (self.y - other.y) as f64;
         let dz = (self.z - other.z) as f64;
-        (dx.powf(2.0) + dy.powf(2.0) + dz.powf(2.0)).sqrt()
+        dx.powf(2.0) + dy.powf(2.0) + dz.powf(2.0)
+        // .sqrt()
+        // Optimized by not actually calculating the square root and actual distance.
+        //  All distances will still have the same relative order.
     }
 }
 impl From<Vec<i64>> for JunctionBox {
