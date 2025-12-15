@@ -26,19 +26,20 @@ On an M1 MacBook Pro
 <!--- benchmarking table --->
 ## Benchmarks
 
-|           Day            |  Part 1   |  Part 2  |
-| :----------------------: | :-------: | :------: |
-| [Day 1](./src/bin/01.rs) | `77.3µs`  | `77.4µs` |
-| [Day 2](./src/bin/02.rs) |  `8.7ms`  | `36.8ms` |
-| [Day 3](./src/bin/03.rs) | `54.3µs`  | `59.0µs` |
-| [Day 4](./src/bin/04.rs) | `87.9µs`  | `1.1ms`  |
-| [Day 5](./src/bin/05.rs) | `47.2µs`  | `39.2µs` |
-| [Day 6](./src/bin/06.rs) | `17.7µs`  | `61.0µs` |
-| [Day 7](./src/bin/07.rs) | `14.2µs`  | `23.5µs` |
-| [Day 8](./src/bin/08.rs) | `56.5ms`  | `58.3ms` |
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---:  |
+| [Day 1](./src/bin/01.rs) | `77.3µs` | `77.4µs` |
+| [Day 2](./src/bin/02.rs) | `8.7ms` | `36.8ms` |
+| [Day 3](./src/bin/03.rs) | `54.3µs` | `59.0µs` |
+| [Day 4](./src/bin/04.rs) | `87.9µs` | `1.1ms` |
+| [Day 5](./src/bin/05.rs) | `47.2µs` | `39.2µs` |
+| [Day 6](./src/bin/06.rs) | `17.7µs` | `61.0µs` |
+| [Day 7](./src/bin/07.rs) | `14.2µs` | `23.5µs` |
+| [Day 8](./src/bin/08.rs) | `56.5ms` | `58.3ms` |
 | [Day 9](./src/bin/09.rs) | `190.8µs` | `96.8ms` |
+| [Day 11](./src/bin/11.rs) | `308.3µs` | `301.1µs` |
 
-**Total: 258.95ms**
+**Total: 259.56ms**
 <!--- benchmarking table --->
 
 ---
