@@ -433,7 +433,7 @@ impl Solver {
         let (shape_idx, instance) = order[depth];
         let shape_set = &self.shape_sets[shape_idx];
 
-        if check_frequency % 3 == 0 {
+        if check_frequency % 5 == 0 {
             let remaining_shapes: Vec<usize> = order[depth..]
                 .iter()
                 .map(|(idx, _)| self.shape_sets[*idx].area)

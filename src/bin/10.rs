@@ -17,8 +17,8 @@ fn solve_gf2(buttons: &[Vec<bool>], target: &[bool]) -> Option<u64> {
         matrix[row][m] = target[row];
     }
 
-    println!("\n=== Initial Matrix ===");
-    print_matrix(&matrix, m);
+    // println!("\n=== Initial Matrix ===");
+    // print_matrix(&matrix, m);
 
     // Track which button (column) is the pivot for each row
     let mut pivot_col = vec![None; n];
@@ -63,7 +63,7 @@ fn solve_gf2(buttons: &[Vec<bool>], target: &[bool]) -> Option<u64> {
             }
         }
 
-        print_matrix(&matrix, m);
+        // print_matrix(&matrix, m);
 
         current_row += 1;
         if current_row >= n {
@@ -72,7 +72,7 @@ fn solve_gf2(buttons: &[Vec<bool>], target: &[bool]) -> Option<u64> {
     }
 
     println!("\n=== Final RREF Matrix ===");
-    print_matrix(&matrix, m);
+    // print_matrix(&matrix, m);
 
     // Check for inconsistency: row with all zeros except target
     for row in 0..n {
@@ -104,24 +104,6 @@ fn solve_gf2(buttons: &[Vec<bool>], target: &[bool]) -> Option<u64> {
     Some(count)
 }
 
-fn print_matrix(matrix: &[Vec<bool>], num_buttons: usize) {
-    print!("        ");
-    for i in 0..num_buttons {
-        print!("B{:<2} ", i);
-    }
-    println!("| T");
-    println!("        {}", "-".repeat(num_buttons * 4 + 4));
-
-    for (i, row) in matrix.iter().enumerate() {
-        print!("Row {}: ", i);
-        for j in 0..num_buttons {
-            print!(" {}  ", if row[j] { '1' } else { '0' });
-        }
-        print!("|  {}", if row[num_buttons] { '1' } else { '0' });
-        println!();
-    }
-}
-
 pub fn part_one(input: &str) -> Option<u64> {
     let mut total = 0;
     let machines = input.lines().collect::<Vec<&str>>();
@@ -132,6 +114,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         let indicator_lights = indicator_lights.strip_prefix("[")?;
 
         let target_light_state: Vec<bool> = indicator_lights.chars().map(|c| c == '#').collect();
+        let num_lights = target_light_state.len();
 
         let (buttons_str, _joltages_str) = rest.split_once("{")?;
         let buttons: Vec<Vec<bool>> = buttons_str
@@ -143,7 +126,7 @@ pub fn part_one(input: &str) -> Option<u64> {
                     .split(',')
                     .map(|n| n.parse().unwrap())
                     .collect();
-                let mut vec = vec![false; target_light_state.len()];
+                let mut vec = vec![false; num_lights];
                 for i in indices {
                     vec[i] = true;
                 }
@@ -151,8 +134,16 @@ pub fn part_one(input: &str) -> Option<u64> {
             })
             .collect();
 
-        // Brute force: try all 2^m combinations
-        let min_presses = solve_all_possible_button_combinations(&buttons, &target_light_state)?;
+        // Use bit-packed solver for machines with ≤32 lights (all inputs qualify)
+        let min_presses = if num_lights <= 32 {
+            let button_masks: Vec<u32> = buttons.iter().map(|b| button_to_mask(b)).collect();
+            let target_mask = target_to_mask(&target_light_state);
+            solve_bitpacked(&button_masks, target_mask)?
+        } else {
+            // Fall back to Vec<bool> version for larger machines (shouldn't happen)
+            solve_all_possible_button_combinations(&buttons, &target_light_state)?
+        };
+
         total += min_presses;
     }
     Some(total)
@@ -194,6 +185,60 @@ fn solve_all_possible_button_combinations(buttons: &[Vec<bool>], target: &[bool]
     }
 
     min_presses
+}
+
+/// BIT-PACKED VERSION: Try all button combinations using bitmasks (5-10x faster)
+/// Works for machines with ≤32 lights (all Day 10 inputs have ≤10 lights)
+fn solve_bitpacked(button_masks: &[u32], target_mask: u32) -> Option<u64> {
+    let num_buttons = button_masks.len();
+    let mut min_presses: Option<u64> = None;
+
+    // Try all 2^num_buttons combinations
+    for combination in 0u32..(1u32 << num_buttons) {
+        let mut state: u32 = 0;
+        let presses = combination.count_ones() as u64;
+
+        // Apply each button's effect with a single XOR operation
+        for (button_idx, &button_mask) in button_masks.iter().enumerate() {
+            if (combination & (1u32 << button_idx)) != 0 {
+                state ^= button_mask;
+            }
+        }
+
+        // Single comparison instead of Vec comparison
+        if state == target_mask {
+            min_presses = Some(match min_presses {
+                None => presses,
+                Some(current_min) => current_min.min(presses),
+            });
+        }
+    }
+
+    min_presses
+}
+
+/// Convert Vec<bool> button representation to u32 bitmask
+#[inline]
+fn button_to_mask(button: &[bool]) -> u32 {
+    let mut mask = 0u32;
+    for (i, &affects) in button.iter().enumerate() {
+        if affects {
+            mask |= 1 << i;
+        }
+    }
+    mask
+}
+
+/// Convert Vec<bool> target to u32 bitmask
+#[inline]
+fn target_to_mask(target: &[bool]) -> u32 {
+    let mut mask = 0u32;
+    for (i, &lit) in target.iter().enumerate() {
+        if lit {
+            mask |= 1 << i;
+        }
+    }
+    mask
 }
 
 /// Solve using BFS to find minimum button presses.
@@ -544,5 +589,77 @@ mod tests {
     fn test_part2_third_machine() {
         let input = "[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}";
         assert_eq!(part_two(input), Some(11));
+    }
+
+    #[test]
+    fn benchmark_old_vs_new() {
+        use std::time::Instant;
+
+        let input = advent_of_code::template::read_file("inputs", DAY);
+
+        // Parse all machines once
+        let mut machines_data = Vec::new();
+        for machine in input.lines() {
+            let (indicator_lights, rest) = machine.split_once("]").unwrap();
+            let indicator_lights = indicator_lights.strip_prefix("[").unwrap();
+            let target_light_state: Vec<bool> =
+                indicator_lights.chars().map(|c| c == '#').collect();
+            let num_lights = target_light_state.len();
+
+            let (buttons_str, _) = rest.split_once("{").unwrap();
+            let buttons: Vec<Vec<bool>> = buttons_str
+                .split_whitespace()
+                .filter(|s| s.starts_with('('))
+                .map(|b| {
+                    let indices: Vec<usize> = b
+                        .trim_matches(|c| c == '(' || c == ')')
+                        .split(',')
+                        .map(|n| n.parse().unwrap())
+                        .collect();
+                    let mut vec = vec![false; num_lights];
+                    for i in indices {
+                        vec[i] = true;
+                    }
+                    vec
+                })
+                .collect();
+
+            machines_data.push((target_light_state, buttons));
+        }
+
+        // Benchmark OLD implementation (Vec<bool>)
+        let start_old = Instant::now();
+        let mut total_old = 0;
+        for (target, buttons) in &machines_data {
+            if let Some(presses) = solve_all_possible_button_combinations(buttons, target) {
+                total_old += presses;
+            }
+        }
+        let duration_old = start_old.elapsed();
+
+        // Benchmark NEW implementation (bit-packed)
+        let start_new = Instant::now();
+        let mut total_new = 0;
+        for (target, buttons) in &machines_data {
+            let button_masks: Vec<u32> = buttons.iter().map(|b| button_to_mask(b)).collect();
+            let target_mask = target_to_mask(target);
+            if let Some(presses) = solve_bitpacked(&button_masks, target_mask) {
+                total_new += presses;
+            }
+        }
+        let duration_new = start_new.elapsed();
+
+        // Results should match
+        assert_eq!(total_old, total_new, "Results don't match!");
+
+        println!("\n=== Day 10 Part 1 Performance Comparison ===");
+        println!("Total machines: {}", machines_data.len());
+        println!("\nOLD (Vec<bool>):  {:?}", duration_old);
+        println!("NEW (bit-packed): {:?}", duration_new);
+        println!(
+            "\nSpeedup: {:.2}x",
+            duration_old.as_secs_f64() / duration_new.as_secs_f64()
+        );
+        println!("Time saved: {:?}", duration_old - duration_new);
     }
 }
